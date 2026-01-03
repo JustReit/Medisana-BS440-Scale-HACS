@@ -1,0 +1,10 @@
+{
+  "domain": "bs440_ble",
+  "name": "BS440 Bluetooth Scale",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": ["bluetooth"],
+  "iot_class": "local_polling",
+  "requirements": [],
+  "version": "1.0.0"
+}
