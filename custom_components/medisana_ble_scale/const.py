@@ -1,7 +1,7 @@
 """Constants for the BS440 BLE integration."""
 from typing import Final
 
-DOMAIN = "bs440_ble"
+DOMAIN = "medisana_ble_scale"
 
 # Configuration
 CONF_MAC = "mac_address"
