@@ -1,0 +1,9 @@
+{
+  "domain": "smart_scale",
+  "name": "Smart BLE Scale",
+  "version": "1.0.0",
+  "documentation": "https://github.com/yourrepo/smart_scale",
+  "requirements": ["bleak==0.22.0"],
+  "dependencies": [],
+  "codeowners": ["@yourgithubusername"]
+}
