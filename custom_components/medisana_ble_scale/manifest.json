@@ -1,10 +1,25 @@
 {
-  "domain": "bs440_ble",
-  "name": "BS440 Bluetooth Scale",
-  "codeowners": [],
+  "domain": "medisana_ble_scale",
+  "name": "Medisana BS440 Scale",
+  "codeowners": ["@JustReit"],
   "config_flow": true,
-  "dependencies": ["bluetooth"],
+  "documentation": "https://github.com/JustReit/Medisana-BS440-Scale-HACS",
+  "issue_tracker": "https://github.com/JustReit/Medisana-BS440-Scale-HACS/issues",
   "iot_class": "local_polling",
-  "requirements": [],
-  "version": "1.0.0"
+  "bluetooth": [
+    {
+      "local_name": "BS440*"
+    },
+    {
+      "local_name": "BS444*"
+    },
+    {
+      "service_uuid": "00008a20-0000-1000-8000-00805f9b34fb"
+    }
+  ],
+  "requirements": [
+    "bleak-retry-connector>=3.4.0",
+    "bleak>=0.21.1"
+  ],
+  "version": "1.1.0"
 }
