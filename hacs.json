@@ -1,14 +1,6 @@
 {
-  "name": "Smart BLE Scale",
-  "content_in_root": false,
-  "domain": "smart_scale",
+  "name": "BS440 Bluetooth Scale",
   "homeassistant": "2023.10.0",
-  "filename": "custom_components/smart_scale",
-  "version": "1.0.0",
-  "description": "Home Assistant integration for BLE smart scales (BS440) with weight, body composition, and BMI support.",
-  "requirements": [
-    "bleak==0.22.0"
-  ],
-  "iot_class": "local_push",
-  "tags": ["sensor", "ble", "health", "weight"]
+  "render_readme": true
 }
+
