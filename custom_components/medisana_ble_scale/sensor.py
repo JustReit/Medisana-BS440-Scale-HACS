@@ -9,7 +9,7 @@ SENSORS = [
     ("fat", "Body Fat", PERCENTAGE, "mdi:human", None),
     ("tbw", "Body Water", PERCENTAGE, "mdi:water-percent", None),
     ("muscle", "Muscle Mass", PERCENTAGE, "mdi:arm-flex", None),
-    ("bone", "Bone Mass", PERCENTAGE, "mdi:bone", None),
+    ("bone", "Bone Mass", UnitOfMass.KILOGRAMS, "mdi:bone", SensorDeviceClass.WEIGHT),
     ("kcal", "Calories", UnitOfEnergy.KILO_CALORIE, "mdi:fire", None),
 ]
 
