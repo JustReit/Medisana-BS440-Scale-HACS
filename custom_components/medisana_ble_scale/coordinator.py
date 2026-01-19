@@ -1,31 +1,50 @@
 import asyncio
 import logging
 import time
+import os
 from struct import unpack
 from datetime import timedelta
 
 from bleak_retry_connector import BleakClientWithServiceCache, establish_connection
 from homeassistant.components import bluetooth
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-
+from homeassistant.helpers.storage import Store
 from .const import (
-    DOMAIN, CONF_MAC, CHAR_PERSON, CHAR_WEIGHT, CHAR_BODY, CHAR_COMMAND, TIME_OFFSET
+    DOMAIN, CONF_MAC, CHAR_PERSON, CHAR_WEIGHT, CHAR_BODY, CHAR_COMMAND, TIME_OFFSET, CONF_USERS
 )
+
 
 _LOGGER = logging.getLogger(__name__)
 
 class BS440Coordinator(DataUpdateCoordinator):
     def __init__(self, hass, entry):
         self.mac = entry.data[CONF_MAC].upper()
+        self.user_names = {}
+        user_str = entry.data.get(CONF_USERS, "")
+        if user_str:
+            for item in user_str.split(","):
+                if ":" in item:
+                    k, v = item.split(":", 1)
+                    self.user_names[int(k.strip())] = v.strip()
+
+        self._store = Store(hass, 1, f"{DOMAIN}_{self.mac}")
         super().__init__(
-            hass, _LOGGER, name=DOMAIN, 
+            hass, _LOGGER, name=DOMAIN,
             update_interval=timedelta(seconds=30)
         )
-        self.data = {} # Format: { person_id: { "weight": 80.5, ... } }
+        self.data = {}
         self._temp_person = None
         self._temp_weight = None
         self._temp_body = None
         self._data_received_event = asyncio.Event()
+
+    async def async_load_data(self):
+        """Load stored data from disk."""
+        stored_data = await self._store.async_load()
+        if stored_data:
+            # Convert keys back to int because JSON stores keys as strings
+            self.data = {int(k): v for k, v in stored_data.items()}
+            _LOGGER.debug("Loaded persisted data for %s: %s", self.mac, self.data)
 
     def _decode_person(self, values):
         data = unpack('BxBxBBBxB', bytes(values[0:9]))
@@ -91,7 +110,11 @@ class BS440Coordinator(DataUpdateCoordinator):
 
                 if self._temp_weight:
                     pid = self._temp_weight["person"]
-                    user_data = {"weight": self._temp_weight["weight"], "person": pid}
+                    user_data = {
+                        "weight": self._temp_weight["weight"],
+                        "person": pid,
+                        "last_measurement": time.time() # Add timestamp here
+                    }
                     
                     if pid != 255 and self._temp_body and self._temp_person:
                         user_data.update({
@@ -106,6 +129,7 @@ class BS440Coordinator(DataUpdateCoordinator):
 
                     self.data[pid] = user_data
                     _LOGGER.info("Updated data for Person %s", pid)
+                    await self._store.async_save(self.data)
 
         except Exception as e:
             _LOGGER.error("BLE Error: %s", e)

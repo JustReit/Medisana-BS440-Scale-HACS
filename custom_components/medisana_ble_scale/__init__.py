@@ -9,7 +9,14 @@ PLATFORMS: list[Platform] = [Platform.SENSOR]
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     coordinator = BS440Coordinator(hass, entry)
+
+    # 1. Load the data from disk first
+    await coordinator.async_load_data()
+
+    # 2. Store coordinator in hass data
     hass.data[DOMAIN][entry.entry_id] = coordinator
+
+    # 3. Now set up platforms (sensors)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
